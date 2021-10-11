@@ -73,7 +73,6 @@ public class ProcessModel : AssetPostprocessor
             //添加敌人脚本
             SuperEnemy enemy = instanceObj.AddComponent<SuperEnemy>();
             enemy.m_life = 5;
-            enemy.m_rocket = rocket.transform;
             enemy.m_explosionFX = fx.transform;
             enemy.m_shootClip = shootClip;
 
@@ -90,7 +89,7 @@ public class ProcessModel : AssetPostprocessor
             }
             else
             {
-                Debug.LogError($"资源【{obj.name}】制作为预制体失败！");
+                Debug.LogError($"资源【{obj.name}】预制体制作失败！");
             }
 
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using PathologicalGames;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -42,12 +43,18 @@ public class Player : MonoBehaviour
         m_rocketTime -= Time.deltaTime;
         if (m_rocketTime <= 0)
         {
-            m_rocketTime = 0.1f;//每间隔0.1秒可以发射子弹
+            m_rocketTime = 0.13f;//每间隔0.15秒可以发射子弹
 
             //按空格键或鼠标左键发射子弹
             if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0))
             {
-                Instantiate(m_rocket, m_transform.position, m_transform.rotation);
+                //Instantiate(m_rocket, m_transform.position, m_transform.rotation);
+
+                //利用对象池 进行子弹加载，避免内存多余的开销
+                var p = PoolManager.Pools["mypool"];
+                p.Spawn("PlayerRocket", m_transform.position, m_transform.rotation,null);
+
+
                 //播放声音
                 m_audio.PlayOneShot(m_shootClip);
             }
@@ -136,8 +143,11 @@ public class Player : MonoBehaviour
             {
                 GameManager.Instance.ChangeLife(0);//生命值0
                 //播放爆炸特效
-                Transform fx = Instantiate(m_explosionFX, m_transform.position, Quaternion.identity);
-                GameManager.Instance.DelayDestoryFx(2, fx.gameObject);//2秒后销毁爆炸特效
+                //Transform fx = Instantiate(m_explosionFX, m_transform.position, Quaternion.identity);
+                Transform fx = PoolManager.Pools["mypool"].Spawn("Explosion", m_transform.position, Quaternion.identity);
+
+                //GameManager.Instance.DelayDestoryFx(2, fx.gameObject);//2秒后销毁爆炸特效
+                PoolManager.Pools["mypool"].Despawn(fx, 2);
 
                 Destroy(this.gameObject);
             }

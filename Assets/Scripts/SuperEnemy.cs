@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using PathologicalGames;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 /// <summary>
 /// 强大的敌人
@@ -8,18 +10,9 @@ using UnityEngine;
 [AddComponentMenu("MyScript/SuperEnemy")]
 public class SuperEnemy : Enemy
 {
-    public Transform m_rocket;//子弹prefab
     protected float m_fireTime = 0;//射击计时器
     protected Transform m_player;//主角
 
-
-    private void Start()
-    {
-        m_transform = this.transform;
-        m_renderer = m_transform.Find("enemy2").GetComponent<Renderer>();
-        m_audio = this.GetComponent<AudioSource>();
-        m_point = (int)m_life;
-    }
 
     protected override void UpdateMove()
     {
@@ -27,27 +20,41 @@ public class SuperEnemy : Enemy
         if (m_fireTime <= 0)
         {
             m_fireTime = 2;
-            if (m_player != null)
-            {
-                //使用向量减法获取朝向主角位置的方向（目标位置-自身位置）
-                Vector3 relativePos = m_player.position - m_transform.position;
-                Instantiate(m_rocket, m_transform.position, Quaternion.LookRotation(relativePos));
-                //播放射击声音
-                m_audio.PlayOneShot(m_shootClip);
-            }
-            else
-            {
-                //查找主角
-                GameObject obj = GameObject.FindGameObjectWithTag("Player");
-                if (obj != null)
-                {
-                    m_player = obj.transform;
-                }
-            }
+            Shoot();
         }
 
         //直线向主角移动【z轴负方向】
         m_transform.Translate(new Vector3(0, 0, -m_speed * Time.deltaTime));
+    }
+
+    /// <summary>
+    /// 射击
+    /// </summary>
+    void Shoot()
+    {
+        if (m_player != null)
+        {
+            //使用向量减法获取朝向主角位置的方向（目标位置-自身位置）
+            Vector3 relativePos = m_player.position - m_transform.position;
+
+            //Instantiate(m_rocket, m_transform.position, Quaternion.LookRotation(relativePos));
+
+            //利用对象池生成子弹
+            var p = PoolManager.Pools["mypool"];
+            p.Spawn("EnemyRocket", m_transform.position, Quaternion.LookRotation(relativePos), null);
+
+            //播放射击声音
+            m_audio.PlayOneShot(m_shootClip);
+        }
+        else
+        {
+            //查找主角
+            GameObject obj = GameObject.FindGameObjectWithTag("Player");
+            if (obj != null)
+            {
+                m_player = obj.transform;
+            }
+        }
     }
 
     /// <summary>
@@ -67,24 +74,38 @@ public class SuperEnemy : Enemy
                 {
 
                     //播放爆炸特效
-                    Transform fx = Instantiate(m_explosionFX, m_transform.position, Quaternion.identity);
+                    //Transform fx = Instantiate(m_explosionFX, m_transform.position, Quaternion.identity);
+                    Transform fx = PoolManager.Pools["mypool"].Spawn("Explosion", m_transform.position, Quaternion.identity);
 
-                    GameManager.Instance.DelayDestoryFx(2, fx.gameObject);//2秒后销毁爆炸特效
+                    //GameManager.Instance.DelayDestoryFx(2, fx.gameObject);//2秒后销毁爆炸特效
+                    PoolManager.Pools["mypool"].Despawn(fx, 2);
+
                     GameManager.Instance.addScore(m_point);//分数增加
 
                     //如果生命<=0，自我销毁
-                    Destroy(this.gameObject);
+                    //Destroy(this.gameObject);
+                    Despawn();
                 }
             }
         }
         else if (other.gameObject.tag == "Player")//如果撞到主角
         {
             //播放爆炸特效
-            Transform fx = Instantiate(m_explosionFX, m_transform.position, Quaternion.identity);
-            m_life = 0;
-            GameManager.Instance.DelayDestoryFx(2, fx.gameObject);//2秒后销毁爆炸特效
+            //Transform fx = Instantiate(m_explosionFX, m_transform.position, Quaternion.identity);
+            Transform fx = PoolManager.Pools["mypool"].Spawn("Explosion", m_transform.position, Quaternion.identity);
 
-            Destroy(this.gameObject);//自我销毁
+            m_life = 0;
+            //GameManager.Instance.DelayDestoryFx(2, fx.gameObject);//2秒后销毁爆炸特效
+            PoolManager.Pools["mypool"].Despawn(fx, 2);
+
+            //Destroy(this.gameObject);//自我销毁
+            Despawn();
         }
+    }
+
+
+    private void OnBecameInvisible()
+    {
+        m_isActiv = true;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using PathologicalGames;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,8 +32,10 @@ public class Rocket : MonoBehaviour
     private void OnBecameInvisible()
     {
         //当离开屏幕后，如果任处于激活状态，就销毁
-        if (this.enabled)
-            Destroy(this.gameObject);
+        //if (this.enabled)
+        //Destroy(this.gameObject);
+
+        Despawn();
     }
 
     /// <summary>
@@ -43,7 +46,28 @@ public class Rocket : MonoBehaviour
     {
         if (other.tag == "Enemy")
         {
-            Destroy(this.gameObject);
+            //Destroy(this.gameObject);
+            Despawn();
+        }
+    }
+
+    /// <summary>
+    /// 自我回收
+    /// </summary>
+    void Despawn()
+    {
+        if (!gameObject.activeSelf) return;//如果未激活，return
+
+        //利用对象池进行回收
+        var p = PoolManager.Pools["mypool"];
+        if (p.IsSpawned(m_transform))//判断该对象是否在对象池中
+        {
+            p.Despawn(m_transform);//回收于对象池内
+        }
+        else
+        {
+            Destroy(gameObject);//直接销毁不在对象池内的游戏对象
+            Debug.LogWarning($"Destroy销毁{this.name}");
         }
     }
 

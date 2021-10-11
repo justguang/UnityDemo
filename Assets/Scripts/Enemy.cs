@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using PathologicalGames;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,8 +16,8 @@ public class Enemy : MonoBehaviour
     protected int m_point;//敌人分数
     protected float m_rotSpeed = 30;//敌人旋转速度
 
-    internal Renderer m_renderer;//模型渲染组件
-    internal bool m_isActiv = false;//是否激活
+    protected Renderer m_renderer;//模型渲染组件
+    protected bool m_isActiv = false;//是否激活
 
     protected Transform m_transform;
 
@@ -25,7 +26,7 @@ public class Enemy : MonoBehaviour
     public Transform m_explosionFX;//爆炸特效
 
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         m_transform = this.transform;
         m_renderer = this.GetComponent<Renderer>();
@@ -34,13 +35,13 @@ public class Enemy : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
         UpdateMove();
+        
         if (m_isActiv && !this.m_renderer.isVisible)
         {
-            //当任处于激活状态，但已经不被任何相机渲染时，自我销毁
-            Destroy(this.gameObject);
+            Despawn();
         }
     }
 
@@ -71,23 +72,33 @@ public class Enemy : MonoBehaviour
                 {
 
                     //播放爆炸特效
-                    Transform fx = Instantiate(m_explosionFX, m_transform.position, Quaternion.identity);
+                    //Transform fx = Instantiate(m_explosionFX, m_transform.position, Quaternion.identity);
+                    Transform fx = PoolManager.Pools["mypool"].Spawn("Explosion", m_transform.position, Quaternion.identity);
 
-                    GameManager.Instance.DelayDestoryFx(2, fx.gameObject);//2秒后销毁爆炸特效
+                    //GameManager.Instance.DelayDestoryFx(2, fx.gameObject);//2秒后销毁爆炸特效
+                    PoolManager.Pools["mypool"].Despawn(fx, 2);
+
                     GameManager.Instance.addScore(m_point);//分数增加
 
                     //如果生命<=0，自我销毁
-                    Destroy(this.gameObject);
+                    //Destroy(this.gameObject);
+
+                    Despawn();
                 }
             }
         }
         else if (other.tag == "Player")//如果撞到主角
         {
             //播放爆炸特效
-            Transform fx = Instantiate(m_explosionFX, m_transform.position, Quaternion.identity);
+            //Transform fx = Instantiate(m_explosionFX, m_transform.position, Quaternion.identity);
+            Transform fx = PoolManager.Pools["mypool"].Spawn("Explosion", m_transform.position, Quaternion.identity);
+
             m_life = 0;
-            GameManager.Instance.DelayDestoryFx(2, fx.gameObject);//2秒后销毁爆炸特效
-            Destroy(this.gameObject);//自我销毁
+            //GameManager.Instance.DelayDestoryFx(2, fx.gameObject);//2秒后销毁爆炸特效
+            PoolManager.Pools["mypool"].Despawn(fx, 2);
+
+            //Destroy(this.gameObject);//自我销毁
+            Despawn();
         }
     }
 
@@ -100,9 +111,20 @@ public class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// unity func：当离开在屏幕上时触发
+    /// 自我回收
     /// </summary>
-    private void OnBecameInvisible()
+    protected void Despawn()
     {
+        var p = PoolManager.Pools["mypool"];
+        if (p.IsSpawned(m_transform))
+        {
+            p.Despawn(m_transform);
+        }
+        else
+        {
+            Destroy(gameObject);
+            Debug.LogWarning($"Destroy销毁敌人{this.name}");
+        }
+        m_isActiv = false;
     }
 }

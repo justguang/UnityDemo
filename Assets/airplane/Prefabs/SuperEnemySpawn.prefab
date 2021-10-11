@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1764010707183679733}
-  - component: {fileID: 1825311032492613678}
+  - component: {fileID: 145714842106197014}
   m_Layer: 0
   m_Name: SuperEnemySpawn
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1825311032492613678
+--- !u!114 &145714842106197014
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,5 +43,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95708a4785a28d24b98008625e2b081a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_enemyPrefab: {fileID: 4071525046284129509, guid: 69d842b651a44bd488bf5757d9df0cb3,
-    type: 3}
+  enemy1_pos: {fileID: 0}
+  enemy2_pos: {fileID: 0}
+  enemy3_pos: {fileID: 0}
+  enemy4_pos: {fileID: 0}
+  enemy5_pos: {fileID: 0}
+  enemy6_pos: {fileID: 0}
+  superEnemy_pos: {fileID: 0}
