@@ -15,16 +15,19 @@ public class EnemyRocket : Rocket
         {
             //Destroy(this.gameObject);
             //利用对象池回收
-            var p = PoolManager.Pools["mypool"];
-            if (p.IsSpawned(m_transform))
-            {
-                p.Despawn(m_transform);
-            }
-            else
-            {
-                Destroy(gameObject);
-                Debug.LogWarning($"Destroy销毁{this.name}");
-            }
+            Despawn();
         }
+    }
+
+    /// <summary>
+    /// unity func：当该物体在任何相机上都不可见时调用 OnBecameInvisible
+    /// </summary>
+    private void OnBecameInvisible()
+    {
+        //当离开屏幕后，如果任处于激活状态，就销毁
+        //if (this.enabled)
+        //Destroy(this.gameObject);
+
+        Despawn();
     }
 }

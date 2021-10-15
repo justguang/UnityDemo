@@ -54,7 +54,7 @@ public class Rocket : MonoBehaviour
     /// <summary>
     /// 自我回收
     /// </summary>
-    void Despawn()
+    public void Despawn()
     {
         if (!gameObject.activeSelf) return;//如果未激活，return
 
