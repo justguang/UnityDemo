@@ -3,8 +3,8 @@
 ### 学习来源：[2DGameKit](https://assetstore.unity.com/packages/templates/tutorials/2d-game-kit-107098)
 
 ### 操作：
-上下左右：W S A D
-近端攻击：K
+上下左右：W S A D 
+近端攻击：K 
 远程攻击：O
 
 游戏截图：
