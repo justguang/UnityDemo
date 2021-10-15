@@ -11,4 +11,7 @@
 
 [太空大战_v2.0](https://github.com/justguang/UnityDemo/releases/tag/airplane_v2.0)
 
+游戏截图：
+<img src="https://img2020.cnblogs.com/blog/2518177/202110/2518177-20211015152207271-274859901.png" style="zoom:30%">
+
 
