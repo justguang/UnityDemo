@@ -116,7 +116,7 @@ public class GameManager : MonoBehaviour
     /// <param name="life"></param>
     public void SetLife(int life)
     {
-
+        if (life < 0) life = 0;
         txt_life.text = life.ToString();
         //当生命值为0时，显示“重新开始游戏”按钮
         if (life <= 0) btn_restart.gameObject.SetActive(true);
