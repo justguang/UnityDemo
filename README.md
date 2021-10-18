@@ -17,6 +17,6 @@
 
 游戏截图：
 
-<img src="https://img2020.cnblogs.com/blog/2518177/202110/2518177-20211018164333716-282756221.png" style="zoom:60%">
-<img src="https://img2020.cnblogs.com/blog/2518177/202110/2518177-20211018164343157-1516567825.png" style="zoom:60%">
+<img src="https://img2020.cnblogs.com/blog/2518177/202110/2518177-20211018164333716-282756221.png">
+<img src="https://img2020.cnblogs.com/blog/2518177/202110/2518177-20211018164343157-1516567825.png">
 	
