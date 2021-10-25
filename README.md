@@ -15,6 +15,23 @@
 	    功能键：Esc
 	    【P键 扣除自身血量】
 	
+
+***********************************************************************************************************************
+
+## [WhackZombies_v2.0](https://github.com/justguang/UnityDemo/releases/tag/WhackZombies_v2.0)
+
+对比[WhackZombies_v1.0](https://github.com/justguang/UnityDemo/releases/tag/WhackZombies_v1.0)：
+新增：
+1. 主界面
+2. 难度选择
+
+修改：
+1. 敌人追逐玩家的bug，玩家跳至高物时，敌人卡在远处而不追向玩家
+2. 敌人生成，根据难度级别生成不同数据的敌人
+3. 玩家部分数据，根据难度级别修改玩家部分数据
+
+ps：主界面的设置功能暂无
+
 ***********************************************************************************************************************
 
 ## [WhackZombies_v1.0](https://github.com/justguang/UnityDemo/releases/tag/WhackZombies_v1.0)
