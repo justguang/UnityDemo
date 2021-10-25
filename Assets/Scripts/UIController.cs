@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -29,6 +27,11 @@ public class UIController : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+    }
+
+    private void Start()
+    {
+        m_gameControllerUI.gameObject.SetActive(false);
     }
 
 
@@ -105,11 +108,17 @@ public class UIController : MonoBehaviour
     /// <summary>
     /// 更新僵尸数量UI显示
     /// </summary>
-    /// <param name="curr"></param>
-    /// <param name="max"></param>
+    /// <param name="curr">当前僵尸数</param>
+    /// <param name="max">最大僵尸数</param>
     public void UpdateZombieNum(int curr, int max)
     {
         if (curr <= 0) curr = 0;
-        m_zombieNum.text = $"僵尸数量：{curr.ToString()}/{max.ToString()}";
+        m_zombieNum.text = $"僵尸数量：{curr.ToString()}";
+    }
+
+    private void OnDestroy()
+    {
+        Instance = null;
+        System.GC.Collect();
     }
 }

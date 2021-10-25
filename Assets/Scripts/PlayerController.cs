@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
 
 
     [SerializeField] private int hp;//玩家血量
+    [SerializeField] private float ATK;//攻击力
 
     #region 相机【第一个是场景主相机】
     [Space]
@@ -188,6 +189,15 @@ public class PlayerController : MonoBehaviour
         //控制帧率
         Application.targetFrameRate = 60;
 
+        //Init();
+
+    }
+
+    /// <summary>
+    /// 初始化
+    /// </summary>
+    public void Init()
+    {
         #region 获取相关组件
         m_transform = this.transform;
         m_ani = m_transform.Find("FirstPersonCharacter/Weapon").GetComponent<Animator>();
@@ -198,17 +208,6 @@ public class PlayerController : MonoBehaviour
         cameras[0] = Camera.main;
         #endregion
 
-        Init();
-
-        //订阅事件
-        GameManager.Instance.GameControllerCallBack += OnEventByGameController;
-    }
-
-    /// <summary>
-    /// 初始化
-    /// </summary>
-    public void Init()
-    {
         if (!gameObject.activeSelf) gameObject.SetActive(true);
 
         if (m_roamController != null)
@@ -218,21 +217,30 @@ public class PlayerController : MonoBehaviour
             m_roamController.transform.localPosition = new Vector3(0, 1, 0);
             m_roamController.transform.localEulerAngles = Vector3.zero;
         }
-        hp = 100;
+        hp = GameConfig.Instance.playerHp;
+        ATK = GameConfig.Instance.playerATK;
         BeAttack(0);
         weaponInitPos = new Vector3(0.386f, -0.3f, 0.32f);//武器初始位置
 
         //初始化弹匣相关
-        Max_StandbyBulletNum = 300;//备用子弹数
+        Max_StandbyBulletNum = GameConfig.Instance.maxStandbyBulletNum;//备用子弹数
         Curr_StandbyBulletNum = Max_StandbyBulletNum;
-        Max_BulletNum = 30;//子弹最大填充数
+        Max_BulletNum = GameConfig.Instance.Infinity ? 99999 : GameConfig.Instance.maxBulletNum;//子弹最大填充数
         Curr_BulletNum = Max_BulletNum;
 
         canShoot = true;//启用射击
         shootInterval = 0.14f;//射击时间间隔
         m_shootRecoil = 3f;//射击后座力
 
+        //FrontSight
+        m_weaponCrossImage = UIController.Instance.transform.Find("FrontSight").GetComponent<Image>();
+
         PlayerState = PlayerState.Idle;
+
+
+        //订阅事件
+        GameManager.Instance.GameControllerCallBack -= OnEventByGameController;
+        GameManager.Instance.GameControllerCallBack += OnEventByGameController;
     }
 
     void Update()
@@ -252,7 +260,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
         {
             Debug.Log("隐藏功能，按下P键，扣除自身血量");
-            BeAttack(30);
+            BeAttack(GameConfig.Instance.enemyATK * 2);
         }
     }
 
@@ -354,7 +362,7 @@ public class PlayerController : MonoBehaviour
                 //打到僵尸
                 //Debug.LogError("打到僵尸");
                 prefabName = "WFX_BImpact SoftBody + Hole";
-                info.transform.GetComponent<ZombieController>().BeAttack(10);
+                info.transform.GetComponent<ZombieController>().BeAttack(ATK);
             }
             else if (info.transform.gameObject.layer == 10)
             {
@@ -553,10 +561,10 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// 玩家被攻击
     /// </summary>
-    public void BeAttack(int attack = 1)
+    public void BeAttack(float attack = 1)
     {
         if (this.hp <= 0) return;
-        this.hp -= attack;
+        this.hp -= (int)attack;
         if (hp <= 0)
         {
             //意思我

@@ -30,7 +30,8 @@ public class ZombieController : MonoBehaviour
     #endregion
 
     #region 自身数据
-    private int m_hp;//血量
+    private float m_hp;//血量
+    private float m_ATK;//攻击力
     private float m_walkSpeed;//行走速度
     private float m_runSpeed;//奔跑速度
     private float m_enmityTime;//僵尸仇恨值，如果被攻击，仇恨更高【玩家脱离僵尸检测范围，仇恨值逐渐减低，当等于0时，不再追逐玩家】
@@ -74,7 +75,7 @@ public class ZombieController : MonoBehaviour
                 case ZombieState.Run:
                     if (m_hp <= 0) return;
                     m_ani.Play("Run", 0, 0.0f);
-                    m_navMeshAgent.SetDestination(m_playerPoint.position);//追踪玩家
+                    m_navMeshAgent.SetDestination(new Vector3(m_playerPoint.position.x, 0.1f, m_playerPoint.position.z));//追踪玩家
                     m_navMeshAgent.speed = m_runSpeed;
                     break;
                 case ZombieState.Hurt:
@@ -116,6 +117,7 @@ public class ZombieController : MonoBehaviour
     {
         //Init();
         //订阅事件
+        GameManager.Instance.GameControllerCallBack -= OnEventByGameController;
         GameManager.Instance.GameControllerCallBack += OnEventByGameController;
     }
 
@@ -133,14 +135,15 @@ public class ZombieController : MonoBehaviour
         m_attackCollider = transform.Find("Hips/Spine/Spine1/Spine2/RightShoulder/RightArm/RightForeArm/RightHand/AttackCollider").GetComponent<BoxCollider>();//攻击的碰撞
         #endregion
 
-        m_hp = 50;
+        m_hp = GameConfig.Instance.enemyHp;
+        m_ATK = GameConfig.Instance.enemyATK;
         m_currNavigatePos = Vector3.zero;
         m_playerPoint = null;//删除玩家持有
-        m_walkSpeed = 0.4f;//行走速度
-        m_runSpeed = 4.5f;//奔跑速度
+        m_walkSpeed = GameConfig.Instance.enemyWalkSpeed;//行走速度
+        m_runSpeed = GameConfig.Instance.enemyRunSpeed;//奔跑速度
 
         m_playerInCheck = false;//玩家不在检测范围内
-        m_enmityTime = 9f;//普通仇恨值（追逐时长）
+        m_enmityTime = GameConfig.Instance.enemyEnmityTime;//普通仇恨值（追逐时长）
 
 
         if (m_attackCollider != null) m_attackCollider.enabled = false;//取消激活攻击碰撞
@@ -210,7 +213,7 @@ public class ZombieController : MonoBehaviour
                     }
                     else
                     {
-                        m_navMeshAgent.SetDestination(m_playerPoint.position);
+                        m_navMeshAgent.SetDestination(new Vector3(m_playerPoint.position.x, 0.1f, m_playerPoint.position.z));
                     }
                 }
                 break;
@@ -278,20 +281,33 @@ public class ZombieController : MonoBehaviour
     {
         //要求存活、有玩家引用，并且玩家已脱离检测
         if (m_playerPoint == null) return;
-        if (m_playerInCheck) return;
+        if (m_playerInCheck)
+        {
+            //刷新仇恨值
+            if (m_enmityTime > GameConfig.Instance.enemyEnmityTime)
+            {
+                m_enmityTime = GameConfig.Instance.enemyMaxEnmityTime;
+            }
+            else
+            {
+                m_enmityTime = GameConfig.Instance.enemyEnmityTime;
+            }
+            return;
+        }
+
         m_enmityTime -= Time.deltaTime;
         if (m_enmityTime <= 0)
         {
             m_playerPoint = null;
-            m_enmityTime = 9f;//重置仇恨值
-            //Debug.LogError($"普通仇恨消除");
+            m_enmityTime = GameConfig.Instance.enemyEnmityTime;//重置仇恨值
+            //Debug.LogError($"仇恨消除");
         }
     }
 
     /// <summary>
     /// 被攻击
     /// </summary>
-    public void BeAttack(int attack = 1)
+    public void BeAttack(float attack = 1)
     {
         if (m_hp <= 0) return;
         m_hp -= attack;
@@ -304,7 +320,7 @@ public class ZombieController : MonoBehaviour
         {
             ZombieState = ZombieState.Hurt;//切换状态受伤
             if (m_playerPoint == null) m_playerPoint = PlayerController.Instance.transform;//一被攻击，僵尸就察觉到玩家的位置
-            m_enmityTime = 18f;//仇恨值拉满
+            m_enmityTime = GameConfig.Instance.enemyMaxEnmityTime;//仇恨值拉满
         }
     }
 
@@ -355,12 +371,11 @@ public class ZombieController : MonoBehaviour
                 //Debug.LogError("检测到玩家");
                 m_playerPoint = trans;
                 m_playerInCheck = true;
-                m_enmityTime = 9f;//刷新仇恨值
                 ZombieState = ZombieState.Run;//切换状态
                 break;
             case "AttackCollider":
                 //Debug.LogError("攻击到玩家");
-                PlayerController.Instance.BeAttack(2);
+                PlayerController.Instance.BeAttack(m_ATK);
                 break;
         }
     }

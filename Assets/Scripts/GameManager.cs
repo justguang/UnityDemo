@@ -13,9 +13,8 @@ public class GameManager : MonoBehaviour
 
 
     [Header("僵尸数")]
-    [SerializeField] private int CurrZombieNum;//当前僵尸数
-    [SerializeField] private int MaxZombieNum;//最大应生成的僵尸数
-    public bool CanGenerateZombie { get { return CurrZombieNum < MaxZombieNum; } }//true=》可以生成僵尸
+    [SerializeField] public int CurrZombieNum;//当前僵尸数
+    [SerializeField] public int MaxZombieNum;//最大应生成的僵尸数
 
     [Space]
     [Header("僵尸出生点/巡逻点")]
@@ -38,9 +37,21 @@ public class GameManager : MonoBehaviour
     {
         //初始化
         CurrZombieNum = 0;
-        MaxZombieNum = 20;
+        MaxZombieNum = GameConfig.Instance.maxEnemyNum;
         GamePause = false;
+        UIEvent[] uiEvents = UIController.Instance.m_gameControllerUI.GetComponentsInChildren<UIEvent>();
+        for (int i = 0; i < uiEvents.Length; i++)
+        {
+            uiEvents[i].myDelegate_OnClick -= OtherOnClick;
+            uiEvents[i].myDelegate_OnClick += OtherOnClick;
+        }
+        Debug.Log($"战斗场景添加的{uiEvents.Length}个UI事件");
+
         UIController.Instance.m_gameControllerUI.gameObject.SetActive(false);
+
+        //PlayerController
+        Transform player = PoolManager.Pools["GamePool"].Spawn("PlayerController", new Vector3(0, 0.2f, 0), Quaternion.identity, transform.parent);
+        player.GetComponent<PlayerController>().Init();
     }
 
 
@@ -108,30 +119,44 @@ public class GameManager : MonoBehaviour
 
     #region 整体游戏控制
 
-    /// <summary>
-    /// 继续游戏
-    /// </summary>
-    public void ContinueGame()
+    void OtherOnClick(object obj)
     {
-        GamePause = false;
-        if (GameControllerCallBack != null) GameControllerCallBack();//事件通知
+        GameObject tempObj = obj as GameObject;
+        if (tempObj == null) return;
         UIController.Instance.m_gameControllerUI.gameObject.SetActive(false);
+
+        switch (tempObj.name)
+        {
+            case "Button_Continue":
+                //游戏继续
+                GamePause = false;
+                if (GameControllerCallBack != null) GameControllerCallBack();//事件通知
+                break;
+            case "Button_Restart":
+                //重新游戏
+                ScenesLoading.Instance.StartLoading(SceneManager.GetActiveScene(), 0);
+                break;
+            case "Button_ReturnMain":
+                //退出主界面
+                if (ScenesLoading.Instance != null)
+                {
+                    ScenesLoading.Instance.StartLoading(SceneManager.GetActiveScene(), 1);
+                }
+                else
+                {
+                    Application.Quit();
+                }
+                break;
+        }
     }
 
-    /// <summary>
-    /// 重新游戏
-    /// </summary>
-    public void RestartGame()
+    void Quit()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);//重新开始游戏
-    }
+        GamePause = true;
+        if (Instance != null)
+            Instance = null;
+        PoolManager.Pools["GamePool"]?.DespawnAll();
 
-    /// <summary>
-    /// 退出游戏
-    /// </summary>
-    public void QuitGame()
-    {
-        Application.Quit();
     }
 
     /// <summary>
@@ -139,10 +164,13 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void OnApplicationQuit()
     {
-        GamePause = true;
-        PoolManager.Pools["GamePool"].DespawnAll();
+        Quit();
+
+    }
+    #endregion
+
+    private void OnDestroy()
+    {
         System.GC.Collect();
     }
-
-    #endregion
 }
