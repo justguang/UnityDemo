@@ -880,6 +880,8 @@ MonoBehaviour:
   enemyATK: 0
   enemyWalkSpeed: 0
   enemyRunSpeed: 0
+  enemyEnmityTime: 0
+  enemyMaxEnmityTime: 0
   playerATK: 0
   playerHp: 0
   maxStandbyBulletNum: 0
@@ -1339,7 +1341,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 45.1, y: 25}
+  m_AnchoredPosition: {x: 45.100098, y: 25}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1185179853
@@ -1374,7 +1376,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: v_1.0
+  m_Text: v_2.0
 --- !u!222 &1185179854
 CanvasRenderer:
   m_ObjectHideFlags: 0
