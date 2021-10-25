@@ -90,7 +90,7 @@ public class StartController : MonoBehaviour
         transform.GetComponent<Animator>().Play("ScreamByStart");
 
         yield return new WaitForSeconds(2f);
-        ScenesLoading.Instance.StartLoading(SceneManager.GetActiveScene(), 0);
+        ScenesLoading.Instance.StartLoading(SceneManager.GetActiveScene(), 1);
 
         yield break;
     }

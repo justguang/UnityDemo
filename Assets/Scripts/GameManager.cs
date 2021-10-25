@@ -134,13 +134,13 @@ public class GameManager : MonoBehaviour
                 break;
             case "Button_Restart":
                 //重新游戏
-                ScenesLoading.Instance.StartLoading(SceneManager.GetActiveScene(), 0);
+                ScenesLoading.Instance.StartLoading(SceneManager.GetActiveScene(), 1);
                 break;
             case "Button_ReturnMain":
                 //退出主界面
                 if (ScenesLoading.Instance != null)
                 {
-                    ScenesLoading.Instance.StartLoading(SceneManager.GetActiveScene(), 1);
+                    ScenesLoading.Instance.StartLoading(SceneManager.GetActiveScene(), 0);
                 }
                 else
                 {
