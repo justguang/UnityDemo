@@ -35,7 +35,7 @@ ps:默认配置文件不存在，需要游玩一次游戏，程序自动生成�
 
 <img src="https://img2020.cnblogs.com/blog/2518177/202110/2518177-20211028232344010-529876749.png" style="zoom:50%">
 
-<img src="https://img2020.cnblogs.com/blog/2518177/202110/2518177-20211028232458741-556777290.png" style="zoom:50%">
+<img src="https://img2020.cnblogs.com/blog/2518177/202110/2518177-20211029102644566-657552130.jpg" style="zoom:50%">
 
 
 
