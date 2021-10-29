@@ -73,6 +73,14 @@ public class GameCamera : MonoBehaviour
 
         //平移相机目标点
         m_cameraPoint.Translate(-mx, 0, -my);
+
+        //限制相机边界
+        Vector3 pos = m_cameraPoint.localPosition;
+        //上下： -5 <= pos.z <= 20
+        //左右： -10 <= pos.x <= 30
+        pos.x = Mathf.Clamp(pos.x, -5f, 25f);
+        pos.z = Mathf.Clamp(pos.z, -5f, 20f);
+        m_cameraPoint.localPosition = pos;
     }
 
 }

@@ -19,13 +19,13 @@
   <wave id="7" enemy="Boar|Boar|Boar|Boar|Bird|Bird|Boar|Boar|Bird" enemyLv="1" baseHp="70" baseSpeed="1.5" price="9" generateInterval="3"/>
   <wave id="8" enemy="Bird|Bird|Bird|Bird|Boar|Boar|Bird|Bird" enemyLv="1" baseHp="90" baseSpeed="1" price="9" generateInterval="3"/>
   <wave id="9" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird" enemyLv="2" baseHp="150" baseSpeed="1" price="10" generateInterval="3"/>
-  <wave id="10" enemy="Bird|Boar|Boar|Bird|Bird|Bird" enemyLv="3" baseHp="190" baseSpeed="1" price="15" generateInterval="5"/>
-  <wave id="11" enemy="Bird|Boar|Boar|Bird|Bird" enemyLv="3" baseHp="230" baseSpeed="1" price="15" generateInterval="6"/>
-  <wave id="12" enemy="Bird|Boar|Boar|Bird" enemyLv="3" baseHp="300" baseSpeed="0.6" price="20" generateInterval="7"/>
-  <wave id="13" enemy="Bird|Boar|Boar" enemyLv="4" baseHp="350" baseSpeed="0.6" price="20" generateInterval="7"/>
-  <wave id="14" enemy="Bird|Boar" enemyLv="4" baseHp="550" baseSpeed="0.6" price="20" generateInterval="7"/>
-  <wave id="15" enemy="Boar" enemyLv="5" baseHp="800" baseSpeed="0.5" price="20" generateInterval="3"/>
-  <wave id="16" enemy="Bird" enemyLv="5" baseHp="1500" baseSpeed="0.5" price="20" generateInterval="3"/>
+  <wave id="10" enemy="Bird|Boar|Boar|Bird|Bird|Bird" enemyLv="3" baseHp="200" baseSpeed="1" price="15" generateInterval="5"/>
+  <wave id="11" enemy="Bird|Boar|Boar|Bird|Bird" enemyLv="3" baseHp="300" baseSpeed="1" price="15" generateInterval="6"/>
+  <wave id="12" enemy="Bird|Boar|Boar|Bird" enemyLv="3" baseHp="400" baseSpeed="0.6" price="20" generateInterval="7"/>
+  <wave id="13" enemy="Bird|Boar|Boar" enemyLv="4" baseHp="500" baseSpeed="0.6" price="20" generateInterval="7"/>
+  <wave id="14" enemy="Bird|Boar" enemyLv="4" baseHp="750" baseSpeed="0.6" price="20" generateInterval="6"/>
+  <wave id="15" enemy="Boar" enemyLv="5" baseHp="1000" baseSpeed="0.5" price="20" generateInterval="3"/>
+  <wave id="16" enemy="Bird" enemyLv="5" baseHp="1700" baseSpeed="0.5" price="20" generateInterval="3"/>
 
   <!-- defender 标签描述：
                       defender 防守单位；目前只有SwordMan、Archer两种防守单位
