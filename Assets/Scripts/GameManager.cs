@@ -261,6 +261,9 @@ public class GameManager : MonoBehaviour
             });
         }
 
+        waves.TrimExcess();
+        defenderConfigs.TrimExcess();
+
     }
 
     /// <summary>
@@ -493,7 +496,7 @@ public class GameManager : MonoBehaviour
         float mx = Input.GetAxis("Mouse X");
         float my = Input.GetAxis("Mouse Y");
 #endif
-        
+
 
         //移动相机
         GameCamera.Instance.Control(press, mx, my);
@@ -507,11 +510,13 @@ public class GameManager : MonoBehaviour
         m_PathNodes = new List<PathNode>();
         //通过路点的tag查找所有的路点
         GameObject[] objs = GameObject.FindGameObjectsWithTag("pathnode");
+        int objsCount = objs.Length;
 
-        for (int i = 0; i < objs.Length; i++)
+        for (int i = 0; i < objsCount; i++)
         {
             m_PathNodes.Add(objs[i].GetComponent<PathNode>());
         }
+        m_PathNodes.TrimExcess();
     }
 
 

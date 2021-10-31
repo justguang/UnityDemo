@@ -1,7 +1,6 @@
 ﻿using PathologicalGames;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -49,7 +48,8 @@ public class EnemySpawner : MonoBehaviour
         WaveData wave = GameManager.Instance.waves[waveIndex];//获取当前波数数据
         yield return new WaitForSeconds(wave.interval);//生成敌人时间间隔
 
-        while (enemyIndex < wave.enemyArr.Length)
+        int waveCount = wave.enemyArr.Length;
+        while (enemyIndex < waveCount)
         {
             Vector3 dir = m_startNode.m_transform.position - m_transform.position;//初始方向
             //实例化敌人

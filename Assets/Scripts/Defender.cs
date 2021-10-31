@@ -121,7 +121,8 @@ public class Defender : MonoBehaviour
         float minlife = 0;//最低生命值
 
         List<Enemy> enemies = GameManager.Instance.m_enemyList;
-        for (int i = 0; i < enemies.Count; i++)
+        int enmiesCount = enemies.Count;
+        for (int i = 0; i < enmiesCount; i++)
         {
             //遍历所有敌人，生命值无的跳过
             if (enemies[i].m_life <= 0) continue;
