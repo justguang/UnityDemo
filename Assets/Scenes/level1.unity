@@ -666,6 +666,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2811645261678627398, guid: 57f10520c3ea7ea44b84e7967df182ba,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2811645261678627398, guid: 57f10520c3ea7ea44b84e7967df182ba,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4970996003098711367, guid: 57f10520c3ea7ea44b84e7967df182ba,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ec9145448538d2941b24414aa78c5e37, type: 3}
     - target: {fileID: 6617650790865988210, guid: 57f10520c3ea7ea44b84e7967df182ba,
         type: 3}
       propertyPath: m_Name
