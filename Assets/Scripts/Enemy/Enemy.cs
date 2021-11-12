@@ -26,10 +26,10 @@ public class Enemy : MonoBehaviour
     {
         m_transform = this.transform;
 
-        m_life = data.baseHp;
+        m_life = data.Hp;
         m_maxLife = m_life;
         m_price = data.price;
-        m_speed = data.baseSpeed;
+        m_speed = data.moveSpeed;
 
         //设置血条
         if (m_lifeBarObj == null)

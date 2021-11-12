@@ -111,6 +111,10 @@ public class TileObject : MonoBehaviour
                     {
                         //敌人通过的区域
                         mapPrefabPath_postfix = "EnemyRoad";
+                    }else if (dataID == (int)TileSatus.NOENTRY)
+                    {
+                        //禁止同行区域
+                        mapPrefabPath_postfix = "NoEntryRoad";
                     }
 
                     //获取对应下标下的mapsData，如果存在对象并且不是对应mapData，删除
@@ -134,7 +138,6 @@ public class TileObject : MonoBehaviour
                             mapsData[i * zTileCount + j] = obj.transform;
                             if (onHierarchyIdx > -1) obj.transform.SetSiblingIndex(onHierarchyIdx);
                         }
-
 
                     }
                 }

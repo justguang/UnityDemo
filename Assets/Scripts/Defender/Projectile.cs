@@ -22,6 +22,7 @@ public class Projectile : MonoBehaviour
     {
         GameObject go = PoolManager.Pools["GamePool"].Spawn("arrow", spawnPos, Quaternion.LookRotation(target.transform.position - spawnPos)).gameObject;//生成弓箭
 
+
         Projectile arrow = go.GetComponent<Projectile>();//获取弓箭添脚本
         arrow.m_target = target;//设置弓箭的弓箭目标
         arrow.m_transform = go.transform;
@@ -40,25 +41,26 @@ public class Projectile : MonoBehaviour
         //向目标前进
         m_transform.Translate(new Vector3(0, 0, 12 * Time.deltaTime));
 
-        if (m_target != null)
+
+        if (m_target != null && m_target.activeSelf)
         {
-            if (m_target.activeSelf)
+            //通过距离检测是否打到目标
+            if (Vector3.Distance(m_transform.position, m_targetCenter.center) < 0.5f)
             {
-                //通过距离检测是否打到目标
-                if (Vector3.Distance(m_transform.position, m_targetCenter.center) < 0.5f)
-                {
-                    //通知弓箭发射者打到目标
-                    onAttack(m_target.GetComponent<Enemy>());
-                    //销毁
-                    m_target = null;
-                    PoolManager.Pools["GamePool"].Despawn(m_transform);
-                }
-            }
-            else
-            {
+                //通知弓箭发射者打到目标
+                onAttack(m_target.GetComponent<Enemy>());
+                //销毁
                 m_target = null;
+
                 PoolManager.Pools["GamePool"].Despawn(m_transform);
             }
         }
+        else
+        {
+            m_target = null;
+
+            PoolManager.Pools["GamePool"].Despawn(m_transform);
+        }
+
     }
 }

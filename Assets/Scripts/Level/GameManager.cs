@@ -4,12 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 using System.Xml;
 using System.IO;
 using PathologicalGames;
 using System.Linq;
-using System.Text;
 
 /// <summary>
 /// 防守单位种类的配置
@@ -50,25 +48,28 @@ public class GameManager : MonoBehaviour
     public LayerMask m_groundlayer;//地面的碰撞layer
     public int m_crrWave = 1;//波数
     public int m_life = 10;//生命值
-    public int m_point = 30;//铜钱数量
+    public int m_gold = 30;//铜钱数量
 
-    public bool m_debug = true;//显示路点的debug开关
+    public bool m_debug = false;//显示路点的debug开关
     public List<PathNode> m_PathNodes;//所有路点
+
     public List<Enemy> m_enemyList = new List<Enemy>();//战斗所有生成的敌人
+    public GameObject m_currLevelGO;//当前关卡gameobject
 
     [Header("敌人进攻波数配置")]
-    public List<WaveData> waves;
+    public Dictionary<int, List<WaveData>> waveDic;//key => 关卡， value => 当前关卡下所有敌人波数
 
     [Header("防守单位种类配置")]
     public List<DefenderConfig> defenderConfigs;
 
     //UI
     Text m_waveTxt;
-    Text m_pointTxt;
+    Text m_goldTxt;
     Text m_lifeTxt;
     Text m_tipsTxt;
-    Vector3 m_tipsInitPos;
-    Button m_onceAginBtn;//再试一次按钮
+    Menu m_menu;//菜单
+
+    Vector3 m_tipsInitPos;//显示提示UI初始位置
 
     //当前是否选中的创建防守单位的按钮
     bool m_isSelectedButton = false;
@@ -91,15 +92,16 @@ public class GameManager : MonoBehaviour
     void Quit()
     {
         PoolManager.Pools["GamePool"].DespawnAll();
-        m_PathNodes.Clear();
         m_enemyList.Clear();
         Instance = null;
-        System.GC.Collect();
+
+        System.GC.Collect(0);
     }
 
     // Start is called before the first frame update
     void Start()
     {
+
         Application.targetFrameRate = 45;//设置帧率
 
         LoadConfig();
@@ -128,7 +130,6 @@ public class GameManager : MonoBehaviour
             {
                 //设置波数
                 m_waveTxt = t.GetComponent<Text>();
-                SetWave(0);
             }
             else if (t.name.Equals("life"))
             {
@@ -136,11 +137,11 @@ public class GameManager : MonoBehaviour
                 m_lifeTxt = t.GetComponent<Text>();
                 m_lifeTxt.text = string.Format("生命：{0}", m_life);
             }
-            else if (t.name.Equals("point"))
+            else if (t.name.Equals("gold"))
             {
                 //设置铜钱
-                m_pointTxt = t.GetComponent<Text>();
-                m_pointTxt.text = string.Format("铜钱：{0}", m_point);
+                m_goldTxt = t.GetComponent<Text>();
+                m_goldTxt.text = string.Format("铜钱：{0}", m_gold);
             }
             else if (t.name.Equals("tips"))
             {
@@ -149,19 +150,21 @@ public class GameManager : MonoBehaviour
                 m_tipsInitPos = m_tipsTxt.transform.localPosition;
                 m_tipsTxt.gameObject.SetActive(false);
             }
-            else if (t.name.Equals("btn_onceAgin"))
+            else if (t.name.Equals("btn_menu"))
             {
-                //再试一次按钮
-                m_onceAginBtn = t.GetComponent<Button>();
-                m_onceAginBtn.onClick.AddListener(delegate ()
+                //菜单开关按钮
+                t.GetComponent<Button>().onClick.AddListener(delegate ()
                 {
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                    m_menu.gameObject.SetActive(true);
                 });
-
-                //默认隐藏按钮
-                m_onceAginBtn.gameObject.SetActive(false);
             }
-            else if (t.name.Contains("btn_player"))
+            else if (t.name.Equals("Menu"))
+            {
+                //菜单，默认隐藏菜单
+                m_menu = t.GetComponent<Menu>();
+                m_menu.gameObject.SetActive(false);
+            }
+            else if (t.name.Contains("*"))
             {
 
                 //防守单位按钮
@@ -172,22 +175,25 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        LoadLevel();
 
-        if (m_PathNodes == null || m_PathNodes.Count <= 0) BuildPath();
-
-
+#if UNITY_EDITOR
+        m_debug = true;
+#else
+        m_debug=false;
+#endif
     }
 
-    #region 配置文件相关
+    #region 读取配置加载关卡
     /// <summary>
     /// 加载配置
     /// </summary>
     public void LoadConfig()
     {
-        waves = new List<WaveData>();
+        waveDic = new Dictionary<int, List<WaveData>>();
         defenderConfigs = new List<DefenderConfig>();
         m_life = 10;
-        m_point = 30;
+        m_gold = 30;
 
         /*
                 Debug.LogError("游戏数据存储路径streamingAssetsPath= " + Application.streamingAssetsPath);
@@ -201,11 +207,12 @@ public class GameManager : MonoBehaviour
 
 
 
-        string filePath = Application.persistentDataPath + "/GameConfigEdit.xml";
+        string filePath = GameFile.fileRootPath + "/" + GameFile.gameConfigFileName;
         if (!File.Exists(filePath))
         {
             Debug.LogError("游戏配置文件不存在,生成中... ：" + filePath);
-            CreateGameConfigFile();
+            TextAsset textAsset = (TextAsset)Resources.Load("GameConfig/GameConfigEdit", typeof(TextAsset));
+            GameFile.CreateGameConfigFile(textAsset.text);
         }
 
         XmlDocument xmlDoc = new XmlDocument();
@@ -225,13 +232,16 @@ public class GameManager : MonoBehaviour
             {
                 //配置敌人进攻波数
                 case "wave":
-                    waves.Add(new WaveData
+                    int level = int.Parse(n.Attributes["level"].Value);
+                    if (!waveDic.ContainsKey(level))
+                        waveDic.Add(level, new List<WaveData>());
+
+                    waveDic[level].Add(new WaveData
                     {
                         waveID = int.Parse(n.Attributes["id"].Value),
                         enemyArr = n.Attributes["enemy"].Value.Split('|'),
-                        level = int.Parse(n.Attributes["enemyLv"].Value),
-                        baseHp = float.Parse(n.Attributes["baseHp"].Value),
-                        baseSpeed = float.Parse(n.Attributes["baseSpeed"].Value),
+                        Hp = float.Parse(n.Attributes["Hp"].Value),
+                        moveSpeed = float.Parse(n.Attributes["moveSpeed"].Value),
                         price = int.Parse(n.Attributes["price"].Value),
                         interval = float.Parse(n.Attributes["generateInterval"].Value)
                     });
@@ -253,36 +263,71 @@ public class GameManager : MonoBehaviour
         }
 
         //按waveID升序排序，保证波数顺序
-        if (waves.Count > 0)
+        int waveCount = waveDic.Count;
+        for (int i = 1; i <= waveCount; i++)
         {
-            waves.Sort((w1, w2) =>
+            List<WaveData> waves = waveDic[i];
+
+            if (waves != null && waves.Count > 0)
             {
-                return w1.waveID.CompareTo(w2.waveID);
-            });
+                waves.Sort((w1, w2) =>
+                {
+                    return w1.waveID.CompareTo(w2.waveID);
+                });
+            }
+
+            waves.TrimExcess();
+
         }
 
-        waves.TrimExcess();
         defenderConfigs.TrimExcess();
 
     }
 
+
     /// <summary>
-    /// 生成配置文件
+    /// 加载关卡
     /// </summary>
-    /// <returns></returns>
-    void CreateGameConfigFile()
+    void LoadLevel()
     {
-        string toPath = Application.persistentDataPath + "/GameConfigEdit.xml";
-        TextAsset textAsset = (TextAsset)Resources.Load("GameConfig/GameConfigEdit", typeof(TextAsset));
+        if (waveDic == null || waveDic.Count <= 0)
+        {
+            Debug.LogError("没有加载到配置");
+            return;
+        }
 
-        if (File.Exists(toPath))
-            File.Delete(toPath);
+        if (m_currLevelGO != null)
+        {
+            m_currLevelGO.SetActive(false);
+            Destroy(m_currLevelGO);
+        }
 
-        File.WriteAllText(toPath, textAsset.text, Encoding.UTF8);
+
+        //当前关卡
+        int currLevel = Sceneloading.Instance.currLevel;
+        if (currLevel > 0 && waveDic.ContainsKey(currLevel))
+        {
+            string prefabName = "Level" + currLevel;
+            GameObject prefab = Resources.Load<GameObject>("Level/" + prefabName);
+            if (prefab == null)
+            {
+                Debug.LogError("无【" + prefabName + "】该关卡场景");
+                return;
+            }
+            m_currLevelGO = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+            EnemySpawner.Instance.StartSpawn(waveDic[currLevel]);
+        }
+        else
+        {
+            Debug.LogError("关卡错误，currLevel=" + currLevel);
+        }
     }
+
 
     #endregion
 
+
+    #region 数据变化、UI显示
     /// <summary>
     /// 设置波数
     /// </summary>
@@ -290,7 +335,7 @@ public class GameManager : MonoBehaviour
     public void SetWave(int wave)
     {
         m_crrWave = wave;
-        m_waveTxt.text = string.Format("波数：{0}/{1}", m_crrWave, waves.Count);
+        m_waveTxt.text = string.Format("波数：{0}/{1}", m_crrWave, waveDic[Sceneloading.Instance.currLevel].Count);
     }
 
 
@@ -306,7 +351,7 @@ public class GameManager : MonoBehaviour
             //死亡
             m_life = 0;
             ShowMsg("通关失败！！", Color.red);
-            RestartGame();
+            OpenMenu();
         }
         m_lifeTxt.text = string.Format("生命：{0}", m_life);
     }
@@ -319,15 +364,9 @@ public class GameManager : MonoBehaviour
     public bool PointEnough(string defenderName)
     {
         bool isEnough = false;
-        if (defenderName.Contains("1"))
-        {
-            isEnough = m_point >= defenderConfigs.Where(d => d.name.Equals("SwordMan")).First().price;
+        string tempName = defenderName.Remove(0, 1);
+        isEnough = m_gold >= defenderConfigs.Where(d => d.name.Equals(tempName)).First().price;
 
-        }
-        else if (defenderName.Contains("2"))
-        {
-            isEnough = m_point >= defenderConfigs.Where(d => d.name.Equals("Archer")).First().price;
-        }
         if (!isEnough)
         {
             ShowMsg("铜钱不足", Color.yellow);
@@ -338,18 +377,18 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 设置铜钱
     /// </summary>
-    /// <param name="point"></param>
+    /// <param name="gold"></param>
     /// <returns></returns>
-    public bool SetPoint(int point)
+    public bool SetPoint(int gold)
     {
-        if ((m_point + point) < 0)
+        if ((m_gold + gold) < 0)
         {
             //铜钱不够
             return false;
         }
 
-        m_point += point;
-        m_pointTxt.text = string.Format("铜钱：{0}", m_point);
+        m_gold += gold;
+        m_goldTxt.text = string.Format("铜钱：{0}", m_gold);
         return true;
     }
 
@@ -378,7 +417,7 @@ public class GameManager : MonoBehaviour
         m_tipsTxt.gameObject.SetActive(true);
         while (movePos.y <= 150)
         {
-            movePos.y += Time.deltaTime * 70f;
+            movePos.y += Time.deltaTime * 60f;
             m_tipsTxt.transform.localPosition = movePos;
             yield return 0;
         }
@@ -387,7 +426,18 @@ public class GameManager : MonoBehaviour
         yield break;
     }
 
+    /// <summary>
+    /// 通关
+    /// </summary>
+    public void PassCurrLevel()
+    {
+        ShowMsg("恭喜通关！！", Color.green);
+        Sceneloading.Instance.PassCurrLevel();
+    }
 
+    #endregion
+
+    #region UI交互事件
     /// <summary>
     /// 按下 “创建防守单位”按钮
     /// </summary>
@@ -435,23 +485,21 @@ public class GameManager : MonoBehaviour
 
                 //获得选择的按钮GameObject，将简单通过按钮名字判断选择了哪个按钮(防守单位)
                 GameObject selectedGo = data.selectedObject;
-                if (selectedGo.name.Contains("1"))
+                string defenderName = selectedGo.name.Remove(0, 1);
+                DefenderConfig dcf = defenderConfigs.Where(d => d.name.Equals(defenderName)).First();
+                //扣除响应铜钱，如果够的话
+                if (SetPoint(-dcf.price))
                 {
-                    DefenderConfig dcf = defenderConfigs.Where(d => d.name.Equals("SwordMan")).First();
-                    //扣除响应铜钱，如果够的话
-                    if (SetPoint(-dcf.price))
+                    switch (defenderName)
                     {
                         //创建近战防守单位
-                        Defender.Create<Defender>(dcf, hitPos, new Vector3(0, 180, 0));
-                    }
-                }
-                else if (selectedGo.name.Contains("2"))
-                {
-                    DefenderConfig dcf = defenderConfigs.Where(d => d.name.Equals("Archer")).First();
-                    if (SetPoint(-dcf.price))
-                    {
+                        case "SwordMan":
+                            Defender.Create<Defender>(dcf, hitPos, new Vector3(0, 180, 0));
+                            break;
                         //创建远程防守单位
-                        Defender.Create<ArcherDefender>(dcf, hitPos, new Vector3(0, 180, 0));
+                        case "Archer":
+                            Defender.Create<ArcherDefender>(dcf, hitPos, new Vector3(0, 180, 0));
+                            break;
                     }
                 }
             }
@@ -461,11 +509,14 @@ public class GameManager : MonoBehaviour
         m_isSelectedButton = false;
     }
 
-    public void RestartGame()
+    /// <summary>
+    /// 打开菜单
+    /// </summary>
+    public void OpenMenu()
     {
-        m_onceAginBtn.gameObject.SetActive(true);//显示再试一次（重新游戏）按钮
+        m_menu.gameObject.SetActive(true);//显示再试一次（重新游戏）按钮
     }
-
+    #endregion
 
 
     // Update is called once per frame
@@ -497,10 +548,17 @@ public class GameManager : MonoBehaviour
         float my = Input.GetAxis("Mouse Y");
 #endif
 
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            //用来弹出询问是否退出的界面
+            Sceneloading.Instance.AskByQuit(true);
+        }
+
 
         //移动相机
         GameCamera.Instance.Control(press, mx, my);
     }
+
 
 
 
@@ -523,7 +581,12 @@ public class GameManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!m_debug || m_PathNodes == null) return;
+        if (!m_debug) return;
+        m_PathNodes.TrimExcess();
+        if (m_PathNodes == null || m_PathNodes.Count <= 0)
+        {
+            BuildPath();
+        }
         Gizmos.color = Color.cyan;//将路点连线的颜色射为青色
 
         //遍历所有路点

@@ -8,9 +8,10 @@ using UnityEngine;
 /// </summary>
 public enum TileSatus
 {
-    DEAD = 0,//禁止【不能在改格子上做任何事】
+    NOENTRY = 0,//禁止【不能在改格子上做任何事】
     ROAD = 1,//专用于敌人行走的格子
     GUARD = 2,//专用于创建防守单位的格子
+    USED = 3,//已使用、已有防守单位
 }
 
 
@@ -46,7 +47,7 @@ public class Defender : MonoBehaviour
         d.Init(config);
 
         //将自己占的格子信息设为占用
-        TileObject.Instance.SetDataFromPosition(d.transform.position.x, d.transform.position.z, (int)TileSatus.DEAD);
+        TileObject.Instance.SetDataFromPosition(d.transform.position.x, d.transform.position.z, (int)TileSatus.USED);
 
         return d;
     }
@@ -71,7 +72,9 @@ public class Defender : MonoBehaviour
     /// <param name="modelName"></param>
     protected virtual void CreateModel(string modelName)
     {
+
         m_model = PoolManager.Pools["GamePool"].Spawn(modelName, transform.position, transform.rotation, transform).gameObject;
+
         m_ani = m_model.GetComponent<Animator>();
     }
 

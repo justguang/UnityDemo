@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 
@@ -58,7 +56,7 @@ public class TileEditor : Editor
         editModel = EditorGUILayout.Toggle("Edit", editModel);//是否启动编辑模式
         tileObject.debug = EditorGUILayout.Toggle("Debug",tileObject.debug);//是否显示信息
 
-        string[] editDataStr = { "禁止","敌人通道","守卫区"};
+        string[] editDataStr = { "禁止区","敌人通道","守卫区"};
         tileObject.dataID = GUILayout.Toolbar(tileObject.dataID, editDataStr);
 
         EditorGUILayout.Separator();//分隔符

@@ -12,6 +12,7 @@ public class PathNode : MonoBehaviour
     private void Start()
     {
         m_transform = transform;
+        if (m_parent == null) EnemySpawner.Instance.m_startNode = this;
     }
 
     public void SetNext(PathNode pathNode)

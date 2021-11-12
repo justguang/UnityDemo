@@ -41,7 +41,7 @@ public class TileWnd : EditorWindow
         //是否显示帮助信息
         tileObject.debug = EditorGUILayout.Toggle("Debug", tileObject.debug);
         //切换 TileObject 的数据
-        string[] editDataStr = { "禁止", "敌人通道", "守卫区" };
+        string[] editDataStr = { "禁止区", "敌人通道", "守卫区" };
         tileObject.dataID = GUILayout.Toolbar(tileObject.dataID, editDataStr);
 
         EditorGUILayout.Separator();//分隔符
