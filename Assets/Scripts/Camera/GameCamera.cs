@@ -17,12 +17,14 @@ public class GameCamera : MonoBehaviour
     protected float m_vx = 0;
     protected float m_vy = 0;
 
+    public Camera m_camera;//Camera对象
     public Transform m_transform;//自身点
     protected Transform m_cameraPoint;//相机点
 
     private void Awake()
     {
         Instance = this;
+        m_camera = Camera.main;
         m_transform = transform;
     }
 

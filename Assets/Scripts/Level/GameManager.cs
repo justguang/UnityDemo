@@ -37,6 +37,35 @@ public struct DefenderConfig
     public int price;
 }
 
+/// <summary>
+/// 被拿起的防守单位
+/// </summary>
+[System.Serializable]
+public struct TakeUpDefender
+{
+    /// <summary>
+    /// 防守单位对象
+    /// </summary>
+    public Defender defender;
+
+    /// <summary>
+    /// 从哪里拿起的
+    /// </summary>
+    public Vector3 initPos;
+
+    /// <summary>
+    /// 拿起时鼠标所在的位置与物体之间的位置偏移【基于屏幕】
+    /// </summary>
+    public Vector3 offsetByScreenPoint;
+
+    /// <summary>
+    /// 经过的tile地砖
+    /// </summary>
+    public Transform passTile;
+}
+
+
+
 public class GameManager : MonoBehaviour
 {
 
@@ -46,6 +75,7 @@ public class GameManager : MonoBehaviour
     public Camera m_camera;
 
     public LayerMask m_groundlayer;//地面的碰撞layer
+    public LayerMask m_defenderlayer;//防守单位的碰撞层
     public int m_crrWave = 1;//波数
     public int m_life = 10;//生命值
     public int m_gold = 30;//铜钱数量
@@ -72,7 +102,11 @@ public class GameManager : MonoBehaviour
     Vector3 m_tipsInitPos;//显示提示UI初始位置
 
     //当前是否选中的创建防守单位的按钮
-    bool m_isSelectedButton = false;
+    bool m_isSelectedCreateDefenderButton = false;
+
+
+    //被鼠标拿起的防守单位
+    TakeUpDefender? m_takeUpDefender = null;
 
     private void Awake()
     {
@@ -104,7 +138,6 @@ public class GameManager : MonoBehaviour
 
         Application.targetFrameRate = 45;//设置帧率
 
-        LoadConfig();
 
         //创建UnityActino，在OnButCreateDefenderDown函数中响应按钮按下事件
         UnityAction<BaseEventData> downAction = new UnityAction<BaseEventData>(OnButCreateDefenderDown);
@@ -174,6 +207,9 @@ public class GameManager : MonoBehaviour
                 trigger.triggers.Add(up);
             }
         }
+
+
+        LoadConfig();
 
         LoadLevel();
 
@@ -315,6 +351,8 @@ public class GameManager : MonoBehaviour
                 return;
             }
             m_currLevelGO = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+            EnemySpawner.Instance.isInfinite = Sceneloading.Instance.IsInfinite;
+            EnemySpawner.Instance.infiniteEnemyWaveIndex = 0;
             EnemySpawner.Instance.StartSpawn(waveDic[currLevel]);
         }
         else
@@ -335,7 +373,10 @@ public class GameManager : MonoBehaviour
     public void SetWave(int wave)
     {
         m_crrWave = wave;
-        m_waveTxt.text = string.Format("波数：{0}/{1}", m_crrWave, waveDic[Sceneloading.Instance.currLevel].Count);
+        if (Sceneloading.Instance.IsInfinite)
+            m_waveTxt.text = string.Format("波数：{0}", m_crrWave);
+        else
+            m_waveTxt.text = string.Format("波数：{0}/{1}", m_crrWave, waveDic[Sceneloading.Instance.currLevel].Count);
     }
 
 
@@ -345,11 +386,15 @@ public class GameManager : MonoBehaviour
     /// <param name="damage">受到伤害</param>
     public void SetDamage(int damage)
     {
+        if (m_life == 0) return;
         m_life -= damage;
+        ShowMsg("生命 -1", Color.red);
+
         if (m_life <= 0)
         {
             //死亡
             m_life = 0;
+
             ShowMsg("通关失败！！", Color.red);
             OpenMenu();
         }
@@ -449,10 +494,9 @@ public class GameManager : MonoBehaviour
             //铜钱充足
             data.selectedObject.GetComponent<RectTransform>().localScale = new Vector3(1.2f, 1.2f);
 
-            m_isSelectedButton = true;
+            m_isSelectedCreateDefenderButton = true;
+
         }
-
-
     }
 
 
@@ -462,7 +506,7 @@ public class GameManager : MonoBehaviour
     /// <param name="data"></param>
     void OnButCreateDefenderUp(BaseEventData data)
     {
-        if (!m_isSelectedButton) return;//铜钱不足
+        if (!m_isSelectedCreateDefenderButton) return;//铜钱不足
         data.selectedObject.GetComponent<RectTransform>().localScale = Vector3.one;
 
         //创建射线
@@ -471,17 +515,8 @@ public class GameManager : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, m_groundlayer))
         {
             //如果选中的是一个可用的格子
-            if (TileObject.Instance.GetDataFromPosition(hit.point.x, hit.point.z) == (int)TileSatus.GUARD)
+            if (TileObject.Instance.GetDataFromPosition(hit.point.x, hit.point.z, out Vector3 centerPos) == (int)TileSatus.GUARD)
             {
-                //获取碰撞点
-                Vector3 hitPos = new Vector3(hit.point.x, 0, hit.point.z);
-                //获取Grid Object座位位置
-                Vector3 gridPos = TileObject.Instance.m_transform.position;
-                //获取格子大小
-                float tileSize = TileObject.Instance.tileSize;
-                //计算出鼠标点的格子的中心位置
-                hitPos.x = gridPos.x + (int)((hitPos.x - gridPos.x) / tileSize) * tileSize + tileSize * 0.5f;
-                hitPos.z = gridPos.z + (int)((hitPos.z - gridPos.z) / tileSize) * tileSize + tileSize * 0.5f;
 
                 //获得选择的按钮GameObject，将简单通过按钮名字判断选择了哪个按钮(防守单位)
                 GameObject selectedGo = data.selectedObject;
@@ -494,11 +529,11 @@ public class GameManager : MonoBehaviour
                     {
                         //创建近战防守单位
                         case "SwordMan":
-                            Defender.Create<Defender>(dcf, hitPos, new Vector3(0, 180, 0));
+                            Defender.Create<Defender>(dcf, centerPos, new Vector3(0, 180, 0));
                             break;
                         //创建远程防守单位
                         case "Archer":
-                            Defender.Create<ArcherDefender>(dcf, hitPos, new Vector3(0, 180, 0));
+                            Defender.Create<ArcherDefender>(dcf, centerPos, new Vector3(0, 180, 0));
                             break;
                     }
                 }
@@ -506,7 +541,7 @@ public class GameManager : MonoBehaviour
 
         }
 
-        m_isSelectedButton = false;
+        m_isSelectedCreateDefenderButton = false;
     }
 
     /// <summary>
@@ -519,15 +554,141 @@ public class GameManager : MonoBehaviour
     #endregion
 
 
+    #region 鼠标点击拖拽防守单位事件
+    /// <summary>
+    /// 鼠标按下 拿起防守单位
+    /// </summary>
+    void OnMouseClickDownDefender(Vector3 mousePos)
+    {
+        //创建射线
+        Ray ray = m_camera.ScreenPointToRay(mousePos);
+        //检测射线是否与防守单位碰撞
+        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, m_defenderlayer))
+        {
+            Transform parent = hit.transform.parent.parent;
+            if (parent.name.Equals("defender"))
+            {
+                //获取防守的单位脚本，暂停该防守单位的行为
+                Defender d = parent.GetComponent<Defender>();
+                d.SetPause(true);
+
+                //创建拿起对象的数据
+                m_takeUpDefender = new TakeUpDefender()
+                {
+                    defender = d,
+                    initPos = parent.position,
+                    offsetByScreenPoint = GameCamera.Instance.m_camera.WorldToScreenPoint(parent.transform.position) - mousePos,
+                };
+
+                //被拿起的物体展现缩小效果
+                parent.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+
+                //Debug.LogError("拿起防守单位" + hit.transform.parent.parent.name + "   point=" + hit.transform.parent.parent.position);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 鼠标拖拽拿起的防守单位
+    /// </summary>
+    void OnMouseDragDefender(Vector3 mousePos)
+    {
+        if (m_takeUpDefender == null) return;
+        TakeUpDefender takeUp = m_takeUpDefender.Value;
+        //获取拖拽对象
+        Defender d = takeUp.defender;
+
+        //鼠标位置加偏移量=》拖拽物体的新位置
+        Vector3 newPos = mousePos + takeUp.offsetByScreenPoint;
+        //将计算出的物体新位置转换位3维世界坐标
+        newPos = GameCamera.Instance.m_camera.ScreenToWorldPoint(newPos);
+        newPos.y = 0.1f;
+
+        //Debug.LogError($"newPos={newPos}");
+
+        //刷新拖拽对象的位置
+        d.transform.position = newPos;
+
+
+        //经过的地砖tile，通过缩放地砖展示效果
+        if (takeUp.passTile != null)
+        {
+            takeUp.passTile.localScale = Vector3.one;
+            takeUp.passTile = null;
+        }
+
+        //通过射线检测经过的地砖
+        Ray ray = new Ray(newPos, Vector3.down);
+        if (Physics.Raycast(ray, out RaycastHit hit, 10f, m_groundlayer))
+        {
+            if (TileObject.Instance.GetTileObjFromPosition(hit.point.x, hit.point.z, out Transform tileObj) == (int)TileSatus.GUARD)
+            {
+                if (tileObj == null) return;
+                tileObj.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+                takeUp.passTile = tileObj;
+            }
+        }
+
+        //更新拿起的数据
+        m_takeUpDefender = takeUp;
+    }
+
+
+    /// <summary>
+    /// 鼠标松开 放下防守单位
+    /// </summary>
+    void OnMouseClickUpDefender()
+    {
+        if (m_takeUpDefender == null) return;
+        //获取拿起的数据
+        TakeUpDefender val = m_takeUpDefender.Value;
+        Defender d = val.defender;
+
+        //恢复缩放效果
+        d.transform.localScale = Vector3.one;
+        if (val.passTile != null) val.passTile.localScale = Vector3.one;
+
+        //恢复防守单位的行为
+        d.SetPause(false);
+
+        //创建射线
+        Ray ray = new Ray(d.transform.position, Vector3.down);
+
+        //检测射线是否与地面碰撞
+        if (Physics.Raycast(ray, out RaycastHit hit, 10f, m_groundlayer))
+        {
+            //如果选中的是一个可用的格子
+            if (TileObject.Instance.GetDataFromPosition(hit.point.x, hit.point.z, out Vector3 centerPos) == (int)TileSatus.GUARD)
+            {
+                //将防守单位放到射线碰撞到的位置
+                d.transform.position = centerPos;
+                //将自己占的格子信息设为占用
+                TileObject.Instance.SetDataFromPosition(centerPos.x, centerPos.z, (int)TileSatus.USED);
+                //将之前的位置的格子信息设为空
+                TileObject.Instance.SetDataFromPosition(val.initPos.x, val.initPos.z, (int)TileSatus.GUARD);
+
+                //清空拿起的数据
+                m_takeUpDefender = null;
+                return;
+            }
+
+        }
+
+        //如果没有可用的格子则恢复到物体原本的位置
+        d.transform.position = val.initPos;
+        m_takeUpDefender = null;
+    }
+
+    #endregion
+
+
     // Update is called once per frame
     void Update()
     {
 
-        //如果选中创建士兵的按钮，则取消相机操作
-        if (m_isSelectedButton)
-        {
-            return;
-        }
+        //如果选中创建防守单位的按钮 或 防守单位，则取消相机操作
+        if (m_isSelectedCreateDefenderButton) return;
+
 
         //不同平台的Input代码不同
 #if(UNITY_IOS||UNITY_ANDROID)&&!UNITY_EDITOR
@@ -553,8 +714,21 @@ public class GameManager : MonoBehaviour
             //用来弹出询问是否退出的界面
             Sceneloading.Instance.AskByQuit(true);
         }
+        else if (Sceneloading.Instance.IsInfinite && Input.GetMouseButtonDown(0))
+        {
+            OnMouseClickDownDefender(Input.mousePosition);
+        }
+        else if (Sceneloading.Instance.IsInfinite && Input.GetMouseButtonUp(0))
+        {
+            OnMouseClickUpDefender();
+        }
+        else if (Sceneloading.Instance.IsInfinite && Input.GetMouseButton(0) && (mx != 0.0f || my != 0.0f))
+        {
+            OnMouseDragDefender(Input.mousePosition);
+        }
 
 
+        if (m_takeUpDefender != null) return;
         //移动相机
         GameCamera.Instance.Control(press, mx, my);
     }
@@ -581,9 +755,16 @@ public class GameManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (m_takeUpDefender != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(m_takeUpDefender.Value.defender.transform.position, Vector3.down);
+        }
+
         if (!m_debug) return;
+
         m_PathNodes.TrimExcess();
-        if (m_PathNodes == null || m_PathNodes.Count <= 0)
+        if (m_PathNodes == null || m_PathNodes.Count <= 0 || m_PathNodes[0] == null)
         {
             BuildPath();
         }

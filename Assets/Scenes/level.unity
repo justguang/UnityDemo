@@ -2355,6 +2355,9 @@ MonoBehaviour:
   m_groundlayer:
     serializedVersion: 2
     m_Bits: 512
+  m_defenderlayer:
+    serializedVersion: 2
+    m_Bits: 1024
   m_crrWave: 1
   m_life: 10
   m_gold: 30

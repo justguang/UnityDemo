@@ -22,11 +22,13 @@ public class Enemy : MonoBehaviour
     /// <summary>
     /// 初始化
     /// </summary>
+    /// <param name="data">该敌人所在的波数数据</param>
+    /// <param name="waveIndex">该敌人属于第几波</param>
     public void Init(WaveData data)
     {
         m_transform = this.transform;
 
-        m_life = data.Hp;
+        m_life = data.Hp + (EnemySpawner.Instance.infiniteEnemyWaveIndex * data.Hp * 0.1f);
         m_maxLife = m_life;
         m_price = data.price;
         m_speed = data.moveSpeed;
@@ -96,7 +98,6 @@ public class Enemy : MonoBehaviour
             if (m_currentNode.m_next == null)
             {
                 //没有下一个路点了，说明已到达我方基地
-                GameManager.Instance.ShowMsg("生命 -1", Color.red);
                 GameManager.Instance.SetDamage(1);//扣除我方一点伤害
                 DestroySelf();//销毁自身
             }
@@ -113,10 +114,13 @@ public class Enemy : MonoBehaviour
         if (m_life <= 0f)
         {
             m_life = 0f;
-            //敌人死亡,增加铜钱
-            GameManager.Instance.ShowMsg("铜钱 +" + m_price, Color.yellow);
-            GameManager.Instance.SetPoint(m_price);
-            DestroySelf();
+            if (this.gameObject.activeSelf)
+            {
+                //敌人死亡,增加铜钱
+                GameManager.Instance.ShowMsg("铜钱 +" + m_price, Color.yellow);
+                GameManager.Instance.SetPoint(m_price);
+                DestroySelf();
+            }
         }
     }
 

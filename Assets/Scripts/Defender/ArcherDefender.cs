@@ -31,13 +31,12 @@ public class ArcherDefender : Defender
             yield return new WaitForSeconds(ani_lenght * 0.5f);//等待完成攻击动作
             Vector3 pos = this.m_model.transform.Find("atkpoint").position;//获取攻击点的位置
 
-            if (m_targetEnemy.gameObject.activeSelf)
+            if (m_isFaceEnemy && m_targetEnemy.gameObject.activeSelf)
             {
                 //创建弓箭
                 Projectile.Create(m_targetEnemy.gameObject, pos, (Enemy e) =>
                 {
-                    if (m_targetEnemy != null && m_targetEnemy.gameObject.activeSelf)
-                        e.SetDamage(m_config.power);
+                    e.SetDamage(m_config.power);
                 });
                 m_isAttacked = true;//已经攻击过了
             }
@@ -62,6 +61,6 @@ public class ArcherDefender : Defender
         if (m_isAttacked)
             yield return new WaitForSeconds(m_config.attackInterval);//攻击时间间隔
 
-        StartCoroutine(DoAttack());//下一轮攻击
+        m_attackList.Enqueue(StartCoroutine(DoAttack()));//下一轮攻击
     }
 }

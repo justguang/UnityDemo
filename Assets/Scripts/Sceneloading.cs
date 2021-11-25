@@ -13,6 +13,7 @@ public class Sceneloading : MonoBehaviour
     public Button m_quit;//退出
     public Button m_cancel;//取消
 
+    public bool IsInfinite = false;//无限【true开启无限模式，怪物不断出现；false关闭无限】
 
     public int lastLevel;//玩家解锁最新关卡
     public int currLevel;//当前关卡

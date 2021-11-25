@@ -12,49 +12,49 @@
                     -->
 
   <!-- level 1 第一个关卡 -->
-  <wave level="1" id="1" enemy="Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar" Hp="5" moveSpeed="2" price="3" generateInterval="2"/>
-  <wave level="1" id="2" enemy="Boar|Bird|Boar|Boar|Bird|Boar|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird" Hp="8"  moveSpeed="2" price="3" generateInterval="2"/>
-  <wave level="1" id="3" enemy="Bird|Boar|Bird|Bird|Boar|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar" Hp="12" moveSpeed="2" price="3" generateInterval="2"/>
-  <wave level="1" id="4" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Boar|Boar|Bird|Boar|Boar|Boar|Bird|Boar|Bird" Hp="18" moveSpeed="2" price="4" generateInterval="2"/>
+  <wave level="1" id="1" enemy="Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar" Hp="4" moveSpeed="2" price="2" generateInterval="2"/>
+  <wave level="1" id="2" enemy="Boar|Bird|Boar|Boar|Bird|Boar|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird" Hp="5"  moveSpeed="2" price="2" generateInterval="2"/>
+  <wave level="1" id="3" enemy="Bird|Boar|Bird|Bird|Boar|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar" Hp="7" moveSpeed="2" price="3" generateInterval="2"/>
+  <wave level="1" id="4" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Boar|Boar|Bird|Boar|Boar|Boar|Bird|Boar|Bird" Hp="15" moveSpeed="2" price="4" generateInterval="2"/>
   <wave level="1" id="5" enemy="Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar" Hp="22" moveSpeed="2" price="4" generateInterval="2"/>
   <wave level="1" id="6" enemy="Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird" Hp="28" moveSpeed="2" price="5" generateInterval="2"/>
   <wave level="1" id="7" enemy="Boar|Boar|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Boar|Bird" Hp="38" moveSpeed="2" price="5" generateInterval="2"/>
-  <wave level="1" id="8" enemy="Bird|Bird|Bird|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird" Hp="49" moveSpeed="1.8" price="6" generateInterval="2"/>
-  <wave level="1" id="9" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="60" moveSpeed="1.8" price="6" generateInterval="2"/>
-  <wave level="1" id="10" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="80" moveSpeed="1.5" price="6" generateInterval="2"/>
+  <wave level="1" id="8" enemy="Bird|Bird|Bird|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird" Hp="50" moveSpeed="1.8" price="6" generateInterval="2"/>
+  <wave level="1" id="9" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="69" moveSpeed="1.8" price="6" generateInterval="1.5"/>
+  <wave level="1" id="10" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="90" moveSpeed="1.5" price="6" generateInterval="1.5"/>
 
   <!-- level 2 第二个关卡 -->
-  <wave level="2" id="1" enemy="Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar" Hp="6" moveSpeed="2" price="3" generateInterval="2"/>
-  <wave level="2" id="2" enemy="Boar|Bird|Boar|Boar|Bird|Boar|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird" Hp="12"  moveSpeed="2" price="3" generateInterval="2"/>
-  <wave level="2" id="3" enemy="Bird|Boar|Bird|Bird|Boar|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar" Hp="18" moveSpeed="2" price="4" generateInterval="2"/>
-  <wave level="2" id="4" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Boar|Boar|Bird|Boar|Boar|Boar|Bird|Boar|Bird" Hp="24" moveSpeed="2" price="4" generateInterval="2"/>
+  <wave level="2" id="1" enemy="Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar" Hp="4" moveSpeed="2" price="2" generateInterval="2"/>
+  <wave level="2" id="2" enemy="Boar|Bird|Boar|Boar|Bird|Boar|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird" Hp="5"  moveSpeed="2" price="3" generateInterval="2"/>
+  <wave level="2" id="3" enemy="Bird|Boar|Bird|Bird|Boar|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar" Hp="10" moveSpeed="2" price="4" generateInterval="2"/>
+  <wave level="2" id="4" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Boar|Boar|Bird|Boar|Boar|Boar|Bird|Boar|Bird" Hp="20" moveSpeed="2" price="4" generateInterval="2"/>
   <wave level="2" id="5" enemy="Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar" Hp="30" moveSpeed="2" price="4" generateInterval="2"/>
-  <wave level="2" id="6" enemy="Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird" Hp="48" moveSpeed="2" price="5" generateInterval="2"/>
+  <wave level="2" id="6" enemy="Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird" Hp="45" moveSpeed="2" price="5" generateInterval="2"/>
   <wave level="2" id="7" enemy="Boar|Boar|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Boar|Bird" Hp="60" moveSpeed="1.5" price="5" generateInterval="2"/>
   <wave level="2" id="8" enemy="Bird|Bird|Bird|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird" Hp="70" moveSpeed="1.5" price="6" generateInterval="2"/>
   <wave level="2" id="9" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="80" moveSpeed="1.5" price="6" generateInterval="2"/>
   <wave level="2" id="10" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="100" moveSpeed="1" price="7" generateInterval="2"/>
   <wave level="2" id="11" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="110" moveSpeed="1" price="8" generateInterval="2"/>
-  <wave level="2" id="12" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="130" moveSpeed="1" price="9" generateInterval="2"/>
-  <wave level="2" id="13" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="150" moveSpeed="1" price="10" generateInterval="2"/>
-  <wave level="2" id="14" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="170" moveSpeed="1" price="10" generateInterval="2"/>
-  <wave level="2" id="15" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="200" moveSpeed="1" price="10" generateInterval="2"/>
+  <wave level="2" id="12" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="130" moveSpeed="1" price="9" generateInterval="1.5"/>
+  <wave level="2" id="13" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="150" moveSpeed="1" price="9" generateInterval="1.5"/>
+  <wave level="2" id="14" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="170" moveSpeed="1" price="9" generateInterval="1.5"/>
+  <wave level="2" id="15" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="200" moveSpeed="1" price="10" generateInterval="1.5"/>
 
   <!-- level 3 第三个关卡 -->
-  <wave level="3" id="1" enemy="Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar" Hp="4" moveSpeed="2" price="4" generateInterval="1"/>
-  <wave level="3" id="2" enemy="Boar|Bird|Boar|Boar|Bird|Boar|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird" Hp="6"  moveSpeed="2" price="4" generateInterval="1"/>
-  <wave level="3" id="3" enemy="Bird|Boar|Bird|Bird|Boar|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar" Hp="10" moveSpeed="2" price="5" generateInterval="1"/>
-  <wave level="3" id="4" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Boar|Boar|Bird|Boar|Boar|Boar|Bird|Boar|Bird" Hp="14" moveSpeed="2" price="5" generateInterval="1"/>
-  <wave level="3" id="5" enemy="Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar" Hp="18" moveSpeed="2" price="6" generateInterval="1"/>
-  <wave level="3" id="6" enemy="Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird" Hp="23" moveSpeed="2" price="7" generateInterval="1"/>
+  <wave level="3" id="1" enemy="Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar" Hp="4" moveSpeed="2" price="4" generateInterval="2"/>
+  <wave level="3" id="2" enemy="Boar|Bird|Boar|Boar|Bird|Boar|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird" Hp="6"  moveSpeed="2" price="4" generateInterval="2"/>
+  <wave level="3" id="3" enemy="Bird|Boar|Bird|Bird|Boar|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar" Hp="10" moveSpeed="2" price="5" generateInterval="2"/>
+  <wave level="3" id="4" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Boar|Boar|Bird|Boar|Boar|Boar|Bird|Boar|Bird" Hp="14" moveSpeed="2" price="5" generateInterval="1.5"/>
+  <wave level="3" id="5" enemy="Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar|Boar" Hp="18" moveSpeed="2" price="6" generateInterval="1.5"/>
+  <wave level="3" id="6" enemy="Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird|Bird" Hp="23" moveSpeed="2" price="7" generateInterval="1.5"/>
   <wave level="3" id="7" enemy="Boar|Boar|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Boar|Bird" Hp="30" moveSpeed="1.5" price="7" generateInterval="1"/>
   <wave level="3" id="8" enemy="Bird|Bird|Bird|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird|Bird|Boar|Boar|Bird" Hp="38" moveSpeed="1.5" price="8" generateInterval="1"/>
   <wave level="3" id="9" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="48" moveSpeed="1.5" price="8" generateInterval="1"/>
   <wave level="3" id="10" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="60" moveSpeed="1" price="9" generateInterval="1"/>
   <wave level="3" id="12" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="70" moveSpeed="1" price="9" generateInterval="1"/>
-  <wave level="3" id="13" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="80" moveSpeed="1" price="10" generateInterval="1"/>
+  <wave level="3" id="13" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="80" moveSpeed="1" price="9" generateInterval="1"/>
   <wave level="3" id="14" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="90" moveSpeed="1" price="10" generateInterval="1"/>
-  <wave level="3" id="15" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="200" moveSpeed="1" price="12" generateInterval="1"/>
+  <wave level="3" id="15" enemy="Boar|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar|Bird|Bird|Boar|Bird|Boar" Hp="200" moveSpeed="1" price="10" generateInterval="1"/>
 
   <!-- defender 标签描述：
                       defender 防守单位；目前只有SwordMan、Archer两种防守单位

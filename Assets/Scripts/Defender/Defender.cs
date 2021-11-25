@@ -25,7 +25,10 @@ public class Defender : MonoBehaviour
     protected GameObject m_model;//模型
     protected Animator m_ani;//动画
     protected Transform m_transform;//自身的transform
+    protected Queue<Coroutine> m_attackList = new Queue<Coroutine>();//所有攻击协程
+    protected bool isPause = false;
 
+    //unity start
     protected void Start()
     {
         m_transform = transform;
@@ -52,6 +55,30 @@ public class Defender : MonoBehaviour
         return d;
     }
 
+    /// <summary>
+    /// 设置暂停行为
+    /// </summary>
+    /// <param name="isPause"></param>
+    public void SetPause(bool isPause)
+    {
+        this.isPause = isPause;
+        bool hasCoroutine = m_attackList.Count > 0;
+
+        //如果有攻击协程则停止
+        while (hasCoroutine)
+        {
+            Coroutine c = m_attackList.Dequeue();
+            if (c != null) StopCoroutine(c);
+            hasCoroutine = m_attackList.Count > 0;
+        }
+        m_attackList.Clear();
+
+        m_ani.Play("idle");//播放待机动画
+        if (!isPause) m_attackList.Enqueue(StartCoroutine(DoAttack()));//执行攻击逻辑
+
+        this.m_targetEnemy = null;
+
+    }
 
     /// <summary>
     /// 初始化
@@ -63,7 +90,7 @@ public class Defender : MonoBehaviour
 
         //创建模型
         CreateModel(config.name);
-        StartCoroutine(DoAttack());//执行攻击逻辑
+        SetPause(false);
     }
 
     /// <summary>
@@ -80,9 +107,9 @@ public class Defender : MonoBehaviour
 
     protected void Update()
     {
+        if (this.isPause) return;
         FindEnemy();
         RotateTo();
-        //DoAttack();
     }
 
     /// <summary>
@@ -212,7 +239,7 @@ public class Defender : MonoBehaviour
             yield return new WaitForSeconds(m_config.attackInterval);//攻击时间间隔
 
 
-        StartCoroutine(DoAttack());//下一轮攻击
+        m_attackList.Enqueue(StartCoroutine(DoAttack()));//下一轮攻击
 
     }
 

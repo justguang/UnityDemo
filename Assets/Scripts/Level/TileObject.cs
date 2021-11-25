@@ -64,6 +64,42 @@ public class TileObject : MonoBehaviour
         return data[index];
     }
 
+    /// <summary>
+    /// 获得相应的tile数值
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="z"></param>
+    /// <param name="tileObj">xz点上的tile地砖</param>
+    /// <returns></returns>
+    public int GetTileObjFromPosition(float x, float z, out Transform tileObj)
+    {
+        tileObj = null;
+        int index = (int)((x - m_transform.position.x) / tileSize) * zTileCount + (int)((z - m_transform.position.z) / tileSize);
+        if (index < 0 || index >= data.Length) return 0;
+
+        tileObj = mapsData[index];
+        return data[index];
+    }
+
+    /// <summary>
+    /// 获得相应的tile数值
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="z"></param>
+    /// <param name="centerPos">给的xz轴点对应的tile的中心点</param>
+    /// <returns></returns>
+    public int GetDataFromPosition(float x, float z, out Vector3 centerPos)
+    {
+        int returnInt = GetDataFromPosition(x, z);
+
+        centerPos = new Vector3(x, 0, z);
+        Vector3 mTransformPos = m_transform.position;
+        centerPos.x = mTransformPos.x + (int)((centerPos.x - mTransformPos.x) / tileSize) * tileSize + tileSize * 0.5f;
+        centerPos.z = mTransformPos.z + (int)((centerPos.z - mTransformPos.z) / tileSize) * tileSize + tileSize * 0.5f;
+
+        return returnInt;
+    }
+
     public void SetDataFromPosition(float x, float z, int number)
     {
         int index = (int)((x - m_transform.position.x) / tileSize) * zTileCount + (int)((z - m_transform.position.z) / tileSize);
@@ -111,7 +147,8 @@ public class TileObject : MonoBehaviour
                     {
                         //敌人通过的区域
                         mapPrefabPath_postfix = "EnemyRoad";
-                    }else if (dataID == (int)TileSatus.NOENTRY)
+                    }
+                    else if (dataID == (int)TileSatus.NOENTRY)
                     {
                         //禁止同行区域
                         mapPrefabPath_postfix = "NoEntryRoad";

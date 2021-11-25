@@ -283,10 +283,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 5ce878a514dc6c74aac09391dd429da9, type: 3}
-    m_FontSize: 40
+    m_FontSize: 17
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 2
+    m_MinSize: 0
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -294,7 +294,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '?'
+  m_Text: "\u65E0\u9650\u6A21\u5F0F\n[\u5173]"
 --- !u!222 &300566545
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -430,7 +430,7 @@ GameObject:
   - component: {fileID: 856296213}
   - component: {fileID: 856296212}
   m_Layer: 5
-  m_Name: 4
+  m_Name: infini
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -647,11 +647,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3068c4baf8e41e8459b6fae5da30f104, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  btns:
+  bg: {fileID: 1795262548}
+  levelsBtns:
   - {fileID: 806739460}
   - {fileID: 1275555468}
   - {fileID: 139077461}
-  bg: {fileID: 1795262548}
+  infiniteBtn: {fileID: 856296212}
 --- !u!1 &1135914958
 GameObject:
   m_ObjectHideFlags: 0

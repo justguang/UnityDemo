@@ -22,6 +22,9 @@ public class EnemySpawner : MonoBehaviour
     int enemyIndex = 0;//生成敌人数组的下标
     int waveIndex = 0;//战斗波数数组下标
 
+    public bool isInfinite = false;//无限模式
+    public int infiniteEnemyWaveIndex = 0;//无限模式下的波数
+
     // Start is called before the first frame update
     void Start()
     {
@@ -74,10 +77,15 @@ public class EnemySpawner : MonoBehaviour
         enemyIndex = 0;//本波次，敌人数组下标，第几个敌人
         WaveData wave = this.waves[waveIndex];//获取当前波数数据
 
-        GameManager.Instance.ShowMsg("第 " + (waveIndex + 1) + " 波敌人来袭", Color.yellow);
-        GameManager.Instance.SetWave(waveIndex + 1);//设置UI上的波数显示
+        int amountWave = waveIndex + 1 + infiniteEnemyWaveIndex;
 
-        yield return new WaitForSeconds(wave.interval);//生成敌人时间间隔
+        GameManager.Instance.ShowMsg("第 " + amountWave + " 波敌人来袭", Color.yellow);
+        GameManager.Instance.SetWave(amountWave);//设置UI上的波数显示
+
+        if (isInfinite)
+            yield return new WaitForSeconds(1.5f);//无限模式下生成敌人时间间隔
+        else
+            yield return new WaitForSeconds(wave.interval);//生成敌人时间间隔
 
 
         int enemyCount = wave.enemyArr.Length;
@@ -104,13 +112,19 @@ public class EnemySpawner : MonoBehaviour
                  PoolManager.Pools["GamePool"].Despawn(tran);
              });
 
+
             enemyIndex++;//更新敌人数组下标
 
-            yield return new WaitForSeconds(wave.interval);//生成敌人时间间隔
+            if (isInfinite)
+                yield return new WaitForSeconds(1.5f);//无限模式下生成敌人时间间隔
+            else
+                yield return new WaitForSeconds(wave.interval);//生成敌人时间间隔
         }
 
-        //创建完全部敌人，等待全部被消灭
-        while (m_liveEnemy > 0)
+
+
+        //创建完全部敌人，等待全部被消灭【无限模式下跳过等待】
+        while (!isInfinite && m_liveEnemy > 0)
         {
             yield return 0;
         }
@@ -125,11 +139,21 @@ public class EnemySpawner : MonoBehaviour
         }
         else
         {
-            //通知胜利
-            Debug.LogError("胜利");
-            this.waves.Clear();
-            this.m_startNode = null;
-            GameManager.Instance.PassCurrLevel();
+            if (isInfinite)
+            {
+                //如果时无限模式，重置波数下标，继续生成敌人
+                waveIndex = 0;
+                infiniteEnemyWaveIndex += this.waves.Count;//更新无限模式下的波数
+                StartCoroutine(DoSpawnEnmeies());
+            }
+            else
+            {
+                //通知胜利
+                Debug.LogError("胜利");
+                this.waves.Clear();
+                this.m_startNode = null;
+                GameManager.Instance.PassCurrLevel();
+            }
         }
     }
 
