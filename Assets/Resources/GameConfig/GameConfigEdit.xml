@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GameConfig>
   <!-- wave 标签描述：
-                    wave 敌人波次； 目前只有Boar、Bird两种怪物
+                    wave 敌人波次； 目前只有Boar、Bird两种敌人(怪物)
                     level 当前第几关卡
                     id 第几波； 
                     enemy 当前波全部敌人名字，名字之间用|分割； 
