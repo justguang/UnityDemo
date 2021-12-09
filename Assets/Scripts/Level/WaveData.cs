@@ -6,6 +6,7 @@
 [System.Serializable]
 public class WaveData
 {
+
     /// <summary>
     /// 第几波，waveID
     /// </summary>
