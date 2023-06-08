@@ -1,6 +1,6 @@
 # UnityDemo
 
-## 个人学习笔记及编写的demo集
+## 个人入土记录
 
 ### [2DGameKit_Demo](https://github.com/justguang/UnityDemo/tree/2DGameKit_Demo)
 
